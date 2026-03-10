@@ -10,6 +10,14 @@ class QdrantManager:
         self.client = QdrantClient(url=settings.qdrant_url) 
 
     def create_collection(self,collection_name):
+        """_summary_
+
+        Args:
+            collection_name (str): name of the collection to be created
+
+        Returns:
+            it will return the Qdrant client
+        """
         try:
             if collection_name not in self.client.get_collections().collections:
                 self.client.create_collection(

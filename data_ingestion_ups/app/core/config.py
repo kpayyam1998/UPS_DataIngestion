@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
 
-
+# this settings for retrieving configuration values from environment variables or .env file
 class Settings(BaseSettings):
 
     qdrant_url: str

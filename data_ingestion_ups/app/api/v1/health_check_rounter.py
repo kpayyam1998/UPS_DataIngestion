@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-# health check router for monitoring the service status
+# health check router 
 health_router = APIRouter()
 
 @health_router.get("/health")
