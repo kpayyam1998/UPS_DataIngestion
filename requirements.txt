@@ -1,0 +1,24 @@
+streamlit
+ipykernel
+python-dotenv
+
+
+#fastapi
+uvicorn
+fastapi
+
+# unstructure pdf files lib
+langchain-unstructured 
+unstructured-client 
+unstructured[pdf]
+unstructured-inference
+python-magic
+langchain-google-genai
+langchain-community 
+pymupdf
+# vector database
+langchain-qdrant
+
+
+# streamlit ui
+google-genai
