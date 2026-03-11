@@ -12,6 +12,8 @@ from models.exceptions import (
 
 from google import genai
 from google.genai import types
+from ragas.llms import  litellm_llm,llm_factory
+from ragas.metrics.collections import ContextPrecision
 
 
 class VectorService:
@@ -158,3 +160,36 @@ class GenerateResponse:
         except Exception as exc:
             logger.exception("Response generation failed")
             raise ResponseGenerationException(str(exc))
+
+
+# this class very basic test class to evaluate
+class EvaluateRAG:
+    """
+    responsible for evaluating the RAG system.
+    """
+
+    def __init__(self):
+        self.client = litellm_llm.LiteLLMStructuredLLM(client=genai.Client(api_key=settings.gemini_api_key, vertexai=True))
+        self.llm = llm_factory(model="gemini-2.5-flash",client=self.client)
+        self.scorer = ContextPrecision(llm=self.llm)
+    
+    def evaluate(self, user_query: str, retrived_docs: list, expected_answer: str):
+        """
+        Evaluate the RAG system using Context Precision metric.
+        """
+
+        try:
+            logger.info("Evaluating RAG system with Context Precision")
+            score = self.scorer.score(
+                user_input=user_query,
+                retrieved_contexts=retrived_docs,
+                reference=expected_answer
+            )
+            logger.info(f"RAG evaluation completed with score: {score}")
+
+            return score
+
+        except Exception as exc:
+            logger.exception("RAG evaluation failed")
+            raise Exception(str(exc))
+        

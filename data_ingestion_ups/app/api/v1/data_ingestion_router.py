@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
-from services.vector_service import VectorService, GenerateResponse
-from schemas.vector_schema import QueryRequest
+from services.vector_service import VectorService, GenerateResponse, EvaluateRAG
+from schemas.vector_schema import QueryRequest, EvaluateRequest
 from core.logger import logger
 from utils.file_manager import FileManager
 
 
-router = APIRouter(
+data_ingestion_router = APIRouter(
     prefix="/vector",
     tags=["Vector Operations"]
 )
@@ -18,6 +18,8 @@ def get_vector_service():
 def get_generate_service():
     return GenerateResponse()
 
+def get_evaluate_service():
+    return EvaluateRAG()
 
 def get_file_manager():
     return FileManager()
@@ -26,7 +28,7 @@ def get_file_manager():
 ###############################################################
 # Document Ingestion
 ###############################################################
-@router.post("/ingest", status_code=status.HTTP_200_OK)
+@data_ingestion_router.post("/ingest", status_code=status.HTTP_200_OK)
 async def ingest_documents(
     file: UploadFile = File(...),
     service: VectorService = Depends(get_vector_service),
@@ -58,9 +60,9 @@ async def ingest_documents(
 
 
 ###############################################################
-# Vector Search
+# Vector Search for testing retriver is working or not
 ###############################################################
-@router.post("/search", status_code=status.HTTP_200_OK)
+@data_ingestion_router.post("/search", status_code=status.HTTP_200_OK)
 async def search_documents(
     payload: QueryRequest,
     service: VectorService = Depends(get_vector_service)
@@ -86,7 +88,7 @@ async def search_documents(
 ###############################################################
 # Generate Response with help of vectordb
 ###############################################################
-@router.post("/generate_response", status_code=status.HTTP_200_OK)
+@data_ingestion_router.post("/generate_response", status_code=status.HTTP_200_OK)
 async def generate_response(
     payload: QueryRequest,
     service: GenerateResponse = Depends(get_generate_service)
@@ -106,4 +108,30 @@ async def generate_response(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Response generation failed"
+        )
+###############################################################
+# Evaluate our RAG
+###############################################################   
+@data_ingestion_router.post("/evaluate_rag")
+async def evaluate_rag(
+    payload: EvaluateRequest,
+    eval_service: EvaluateRAG = Depends(get_evaluate_service),
+    retrieve_service: VectorService = Depends(get_vector_service)
+
+):
+    """_summary_
+
+    As of now i have just implemented a very basic evaluation of rag for Context precision we can also check other metrics
+    """
+    try:
+
+        logger.info(f"Search query received: {payload.query}")
+        results = retrieve_service.search(payload.query)
+        evaluation_score = eval_service.evaluate(payload.user_query, payload.reference, results)
+        return {"evaluation_score": evaluation_score}
+    except Exception:
+        logger.exception("RAG evaluation failed")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="RAG evaluation failed"
         )

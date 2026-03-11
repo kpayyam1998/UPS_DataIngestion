@@ -22,3 +22,6 @@ langchain-qdrant
 
 # streamlit ui
 google-genai
+
+#evaluate rag
+ragas

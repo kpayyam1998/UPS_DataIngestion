@@ -73,8 +73,14 @@ pip install -r requirements.txt
 ```
 
 ## Running Qdrant
+
 ```bash
-docker run -p 6333:6333 qdrant/qdrant
+  Qdrant docket setup url below :https://qdrant.tech/documentation/quickstart/
+
+```
+
+```bash
+  docker run -p 6333:6333 qdrant/qdrant
 ```
 
 Dashboard:
@@ -83,6 +89,12 @@ http://localhost:6333/dashboard
 ```
 
 ## Run the API
+
+
+```bash
+cd data_ingestion_ups/app
+```
+
 
 ```bash
 uvicorn app.main:app --reload
@@ -137,6 +149,11 @@ Response:
 }
 ```
 # Streamlit UI RUN command
+
+```bash
+  cd streamlit_ui
+```
+
 ```bash
   streamlit run ui.py
 ```
