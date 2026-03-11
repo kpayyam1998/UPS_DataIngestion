@@ -57,7 +57,7 @@ cd data_ingestion_ups
 ```
 2. Create virtual environment
 ```bash
-python -m venv .venv
+  uv venv
 ```
 
 Activate:
@@ -75,7 +75,7 @@ pip install -r requirements.txt
 ## Running Qdrant
 
 ```bash
-  Qdrant docket setup url below :https://qdrant.tech/documentation/quickstart/
+  Qdrant docket setup url below : https://qdrant.tech/documentation/quickstart/
 
 ```
 
